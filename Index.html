@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👑 THIÊN CHÚA — Discord</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+  background: #000;
+  min-height: 100vh;
+  color: #e5e7eb;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 20% 0%, rgba(88,101,242,0.3), transparent 45%),
+              radial-gradient(circle at 80% 100%, rgba(236,72,153,0.25), transparent 45%);
+  z-index: 0;
+  pointer-events: none;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  background: rgba(10, 8, 18, 0.88);
+  backdrop-filter: blur(24px);
+  border-radius: 20px;
+  padding: 22px;
+  border: 1px solid rgba(88,101,242,0.3);
+  box-shadow: 0 20px 80px rgba(88,101,242,0.3);
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.logo {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5865F2, #7289DA);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 0 24px rgba(88,101,242,0.5);
+}
+.title-block { flex: 1; }
+.title-block h1 {
+  font-size: 18px; font-weight: 900; letter-spacing: 2px;
+  background: linear-gradient(90deg, #5865F2, #99AAB5);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.title-block p { font-size: 10px; color: #6b7280; letter-spacing: 1.5px; font-weight: 700; margin-top: 2px; }
+.badge {
+  font-size: 9px; padding: 4px 8px;
+  background: rgba(107,114,128,0.15);
+  border: 1px solid #6b7280;
+  border-radius: 6px;
+  color: #9ca3af;
+  font-weight: 800;
+}
+.badge.on { background: rgba(234,179,8,0.15); border-color: #eab308; color: #facc15; }
+.badge.ok { background: rgba(34,197,94,0.15); border-color: #22c55e; color: #4ade80; }
+.badge.err { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #f87171; }
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 10.5px; color: #9ca3af; font-weight: 800;
+  letter-spacing: 1.5px; margin-bottom: 6px;
+}
+.field input, .field textarea {
+  width: 100%; padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e5e7eb; font-size: 13px; font-family: inherit;
+  transition: all 0.2s;
+}
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: #5865F2;
+  box-shadow: 0 0 0 3px rgba(88,101,242,0.15);
+  background: rgba(0,0,0,0.65);
+}
+.field textarea { min-height: 70px; resize: vertical; }
+.hint { font-size: 10px; color: #4b5563; margin-top: 5px; line-height: 1.4; }
+
+.btn {
+  width: 100%; padding: 13px;
+  border-radius: 10px; border: none;
+  cursor: pointer;
+  font-size: 13px; font-weight: 900; letter-spacing: 1.5px;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+.btn-check { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.4); }
+.btn-check:hover:not(:disabled) { background: rgba(59,130,246,0.25); }
+.btn-primary { background: linear-gradient(135deg, #5865F2, #7289DA); color: #fff; box-shadow: 0 4px 24px rgba(88,101,242,0.5); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 30px rgba(88,101,242,0.7); }
+.btn-danger { background: rgba(220,38,38,0.1); color: #f87171; border: 1px solid rgba(220,38,38,0.4); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.result {
+  margin-top: 12px; padding: 12px;
+  border-radius: 10px; font-size: 12px;
+  line-height: 1.6; display: none;
+  word-break: break-word;
+}
+.result.show { display: block; }
+.result.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.35); color: #4ade80; }
+.result.error { background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.35); color: #f87171; }
+.result.loading { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); color: #fbbf24; }
+.result.info { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); color: #60a5fa; }
+
+.stats {
+  display: none; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; margin-top: 12px;
+}
+.stats.show { display: grid; }
+.stat-box {
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px; padding: 12px 8px;
+  text-align: center;
+}
+.stat-box .num { font-size: 20px; font-weight: 900; color: #4ade80; line-height: 1; }
+.stat-box .num.blue { color: #60a5fa; }
+.stat-box .num.pink { color: #f472b6; }
+.stat-box .lbl { font-size: 9px; color: #6b7280; margin-top: 4px; letter-spacing: 1px; font-weight: 700; }
+
+.spinner {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid currentColor; border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.footer { text-align: center; font-size: 9.5px; color: #4b5563; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); letter-spacing: 1.5px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">👑</div>
+    <div class="title-block">
+      <h1>THIÊN CHÚA</h1>
+      <p>DISCORD BOT SPAM</p>
+    </div>
+    <div class="badge" id="badge">READY</div>
+  </div>
+
+  <div class="field">
+    <label>🤖 BOT TOKEN</label>
+    <input type="password" id="token" placeholder="MTU1NjY3...">
+    <div class="hint">Developer Portal → Bot → Đặt lại Token → Sao chép</div>
+  </div>
+
+  <div class="field">
+    <label>🔗 CHANNEL ID</label>
+    <input type="text" id="channel" placeholder="1234567890123456789">
+    <div class="hint">Discord → Settings → Advanced → Developer Mode → chuột phải kênh → Copy ID</div>
+  </div>
+
+  <button class="btn btn-check" id="checkBtn">🔍 KIỂM TRA TOKEN + CHANNEL</button>
+
+  <div class="field">
+    <label>📝 NỘI DUNG TIN NHẮN</label>
+    <textarea id="content" placeholder="Nội dung muốn spam..."></textarea>
+  </div>
+
+  <div class="field">
+    <label>⏱️ DELAY (giây/tin)</label>
+    <input type="number" id="delay" value="1" min="0.5" max="60" step="0.1">
+  </div>
+
+  <div class="field">
+    <label>⏰ THỜI GIAN CHẠY (giây, tối đa 300)</label>
+    <input type="number" id="duration" value="300" min="10" max="300">
+  </div>
+
+  <button class="btn btn-primary" id="startBtn">🚀 BẮT ĐẦU SPAM</button>
+  <button class="btn btn-danger" id="stopBtn" disabled>⏹ DỪNG</button>
+
+  <div class="result" id="result"></div>
+
+  <div class="stats" id="stats">
+    <div class="stat-box"><div class="num" id="statSent">0</div><div class="lbl">ĐÃ GỬI</div></div>
+    <div class="stat-box"><div class="num blue" id="statRate">0/s</div><div class="lbl">TỐC ĐỘ</div></div>
+    <div class="stat-box"><div class="num pink" id="statTime">0s</div><div class="lbl">THỜI GIAN</div></div>
+  </div>
+
+  <div class="footer">👑 THIÊN CHÚA · VERCEL 👑</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const tokenEl = $('token'), channelEl = $('channel'), contentEl = $('content');
+const delayEl = $('delay'), durationEl = $('duration');
+const startBtn = $('startBtn'), stopBtn = $('stopBtn'), checkBtn = $('checkBtn');
+const resultEl = $('result'), statsEl = $('stats'), badge = $('badge');
+
+let pollTimer = null, running = false;
+
+function show(msg, cls) {
+  resultEl.className = 'result show ' + (cls || '');
+  resultEl.innerHTML = msg;
+}
+function hide() { resultEl.className = 'result'; resultEl.innerHTML = ''; }
+function setBadge(txt, cls) {
+  badge.textContent = txt;
+  badge.className = 'badge' + (cls ? ' ' + cls : '');
+}
+function setRunning(on) {
+  running = on;
+  startBtn.disabled = on;
+  stopBtn.disabled = !on;
+  checkBtn.disabled = on;
+  setBadge(on ? 'RUNNING' : 'READY', on ? 'on' : '');
+}
+
+async function check() {
+  const token = tokenEl.value.trim();
+  const channel = channelEl.value.trim();
+  if (!token) { show('⚠️ Chưa nhập Bot Token', 'error'); return; }
+  if (!channel) { show('⚠️ Chưa nhập Channel ID', 'error'); return; }
+
+  show('<span class="spinner"></span>Đang kiểm tra token + channel...', 'loading');
+
+  try {
+    const res = await fetch('/api/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, channel })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      show('✅ TOKEN HỢP LỆ<br>' +
+           '• Bot: <b>' + data.botName + '#' + data.botDiscriminator + '</b><br>' +
+           '• Kênh: <b>#' + data.channelName + '</b><br>' +
+           '• Server: <b>' + data.guildName + '</b><br>' +
+           '• Quyền gửi tin: <b style="color:' + (data.canSend ? '#4ade80' : '#f87171') + '">' + (data.canSend ? 'CÓ' : 'KHÔNG') + '</b>', 
+           data.canSend ? 'success' : 'error');
+      setBadge(data.canSend ? 'OK' : 'NO PERM', data.canSend ? 'ok' : 'err');
+    } else {
+      show('❌ ' + data.error, 'error');
+      setBadge('ERROR', 'err');
+    }
+  } catch (e) {
+    show('❌ Lỗi kết nối: ' + e.message, 'error');
+    setBadge('ERROR', 'err');
+  }
+}
+
+async function start() {
+  const token = tokenEl.value.trim();
+  const channel = channelEl.value.trim();
+  const content = contentEl.value.trim();
+  const delay = parseFloat(delayEl.value) || 1;
+  const duration = parseInt(durationEl.value) || 300;
+
+  if (!token) { show('⚠️ Chưa nhập Bot Token', 'error'); return; }
+  if (!channel) { show('⚠️ Chưa nhập Channel ID', 'error'); return; }
+  if (!content) { show('⚠️ Chưa nhập nội dung', 'error'); return; }
+
+  show('<span class="spinner"></span>Đang khởi động bot...', 'loading');
+  statsEl.classList.add('show');
+  $('statSent').textContent = '0';
+  $('statRate').textContent = '0/s';
+  $('statTime').textContent = '0s';
+
+  try {
+    const res = await fetch('/api/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, channel, content, delay, duration })
+    });
+    const data = await res.json();
+
+    if (!data.ok) {
+      show('❌ ' + (data.error || 'Không khởi động được'), 'error');
+      statsEl.classList.remove('show');
+      return;
+    }
+
+    show('✅ Bot đang chạy. Đóng tab vẫn chạy.', 'success');
+    setRunning(true);
+    pollTimer = setInterval(poll, 1500);
+  } catch (e) {
+    show('❌ Lỗi kết nối: ' + e.message, 'error');
+    statsEl.classList.remove('show');
+  }
+}
+
+async function poll() {
+  try {
+    const res = await fetch('/api/stats');
+    const data = await res.json();
+    if (!data.ok) return;
+    $('statSent').textContent = data.sent || 0;
+    $('statRate').textContent = (data.rate || 0).toFixed(1) + '/s';
+    $('statTime').textContent = (data.time || 0).toFixed(0) + 's';
+
+    if (data.error) {
+      show('❌ Bot dừng: ' + data.error, 'error');
+      clearInterval(pollTimer);
+      setRunning(false);
+      return;
+    }
+    if (!data.running && data.sent > 0) {
+      clearInterval(pollTimer);
+      setRunning(false);
+      show('✅ Bot đã dừng. Tổng: ' + data.sent + ' tin.', 'success');
+    }
+  } catch (e) {}
+}
+
+async function stop() {
+  try {
+    await fetch('/api/stop', { method: 'POST' });
+    if (pollTimer) clearInterval(pollTimer);
+    setRunning(false);
+    show('⏹ Đã dừng bot.', 'success');
+  } catch (e) {
+    show('❌ ' + e.message, 'error');
+  }
+}
+
+checkBtn.onclick = check;
+startBtn.onclick = start;
+stopBtn.onclick = stop;
+</script>
+</body>
+  </html>
